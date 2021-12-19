@@ -3,21 +3,13 @@ body {
     color: white;
 }
 
-#container {
-    position: relative;
-    border: 1px solid yellow;
-    width: 90vmin;
-    height: 90vmin;
-    margin: 5% auto;
-}
-
 #grid-platform {
     display: grid;
     grid-template-columns: repeat(10, 1fr);
-    margin: auto;
+    width: 90vmin;
+    height: 90vmin;
+    margin: 5% auto;
     row-gap: 1%;
-    width: 90%;
-    height: 90%;
 }
 
 i {
@@ -46,11 +38,16 @@ i {
     border-top-left-radius: 50%;
 }
 
-.pawn-ico, .display-name {
-    visibility: hidden;
+.fields:first-child, .fields:nth-child(91) {
+    position: relative;
 }
 
 .arrow-ico {
     font-size: 4rem;
     position: absolute;
+    transform: translateX(-200%);
+}
+
+.pawn-ico, .display-name {
+    visibility: hidden;
 }
