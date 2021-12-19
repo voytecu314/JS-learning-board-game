@@ -17,9 +17,8 @@ function moveAuto(playerPoints,playerNumber) {
     let color = ["red","blue"];
     let playerField, playerDirection;
 
-    // playerPoints=Math.ceil(Math.random()*6); 
+    playersPoints[playerNumber]+=Math.ceil(Math.random()*6); 
 
-    playersPoints[playerNumber]+=playerPoints;
     
     // playerDirection = (Math.floor(playersPoints[playerNumber]-1/10)%2) ? "left" : "right";
 
@@ -39,12 +38,12 @@ function moveAuto(playerPoints,playerNumber) {
 
     }
     
-    console.log(playerPoints + " Player " + `${playerNumber+1}` + "pnt"+playersPoints[playerNumber]+playerDirection);
+    console.log(`${playersPoints}`);
 
     playerField = (playerDirection==="right") ? playersPoints[playerNumber] : playersPoints[playerNumber] + changDirectionToLeft[playersPoints[playerNumber]%10]+1;
 
 
-    if(playerPoints>=100) {alert(`Player ${playerNumber+1} ` + "WINS!")}
+    if( playersPoints[playerNumber] >=100) {alert(`Player ${playerNumber+1} ` + "WINS!")}
 
 
     fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="hidden";
@@ -59,12 +58,12 @@ function moveAuto(playerPoints,playerNumber) {
     // }
  }
 
-// for(let j=0; j<10; j++) {
-//     for(let i=0; i<playersPoints.length; i++){
-//         moveAuto(playersPoints[i],i)
-//     }
+for(let j=0; j<10; j++) {
+    for(let i=0; i<playersPoints.length; i++){
+        moveAuto(playersPoints[i],i)
+    }
 
-// console.log(playersPoints);
-// }
+console.log(playersPoints);
+}
 
-setInterval(moveAuto,600,playersPoints[0],0);
+// setInterval(moveAuto,600,playersPoints[0],0);
