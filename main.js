@@ -1,8 +1,8 @@
 const fields = document.querySelectorAll('.fields');
-let playersPoints = [1,1]; 
+let playersPoints = [1,1,1,1]; 
 //const changDirectionToLeft = [9,7,5,3,1,-1,-3,-5,-7,-9];
 const changDirectionToLeft = [-10,8,6,4,2,0,-2,-4,-6,-8];
-let playerFieldBefore = [0,0];
+let playerFieldBefore = [0,0,0,0];
 
 /*SET NUMBERS ON BOARD*/
 for(let i=10; i<92;i+=20){
@@ -14,7 +14,7 @@ for(let i=10; i<92;i+=20){
 
 function moveAuto(playerPoints,playerNumber) {
 
-    let color = ["red","blue"];
+    let color = ["red","blue","green","orange"];
     let playerField, playerDirection;
 
     playersPoints[playerNumber]+=Math.ceil(Math.random()*6); 
@@ -38,7 +38,6 @@ function moveAuto(playerPoints,playerNumber) {
 
     }
     
-    console.log(`${playersPoints}`);
 
     playerField = (playerDirection==="right") ? playersPoints[playerNumber] : playersPoints[playerNumber] + changDirectionToLeft[playersPoints[playerNumber]%10]+1;
 
@@ -58,7 +57,7 @@ function moveAuto(playerPoints,playerNumber) {
     // }
  }
 
-for(let j=0; j<10; j++) {
+for(let j=0; j<5; j++) {
     for(let i=0; i<playersPoints.length; i++){
         moveAuto(playersPoints[i],i)
     }
