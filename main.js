@@ -1,6 +1,7 @@
 const fields = document.querySelectorAll('.fields');
-let playersPoints = [0,0]; 
-const changDirectionToLeft = [9,7,5,3,1,-1,-3,-5,-7,-9];
+let playersPoints = [1,1]; 
+//const changDirectionToLeft = [9,7,5,3,1,-1,-3,-5,-7,-9];
+const changDirectionToLeft = [-10,8,6,4,2,0,-2,-4,-6,-8];
 let playerFieldBefore = [0,0];
 
 /*SET NUMBERS ON BOARD*/
@@ -13,34 +14,57 @@ for(let i=10; i<92;i+=20){
 
 function moveAuto(playerPoints,playerNumber) {
 
-    playerPoints+=Math.ceil(Math.random()*6);
-
     let color = ["red","blue"];
-
     let playerField, playerDirection;
-    playerDirection = (Math.floor(playerPoints/10)%2) ? "left" : "right";
-   
-    playerField = (playerDirection==="right") ? playerPoints : playerPoints-1 + changDirectionToLeft[playerPoints%10]+1;
+
+    // playerPoints=Math.ceil(Math.random()*6); 
+
+    playersPoints[playerNumber]+=playerPoints;
+    
+    // playerDirection = (Math.floor(playersPoints[playerNumber]-1/10)%2) ? "left" : "right";
+
+    switch(playersPoints[playerNumber]) {
+        case 1: case 2: case 3: case 4: case 5: case 6: case 7: case 8: case 9: case 10: 
+        case 21: case 22: case 23: case 24: case 25: case 26: case 27: case 28: case 29: case 30:
+        case 41: case 42: case 43: case 44: case 45: case 46: case 47: case 48: case 49: case 50:
+        case 61: case 62: case 63: case 64: case 65: case 66: case 67: case 68: case 69: case 70:
+        case 81: case 82: case 83: case 84: case 85: case 86: case 87: case 88: case 89: case 90:
+            playerDirection = "right"; break;
+        case 11: case 12: case 13: case 14: case 15: case 16: case 17: case 18: case 19: case 20: 
+        case 31: case 32: case 33: case 34: case 35: case 36: case 37: case 38: case 39: case 40:
+        case 51: case 52: case 53: case 55: case 55: case 56: case 57: case 58: case 59: case 60:
+        case 71: case 72: case 73: case 74: case 75: case 77: case 77: case 78: case 79: case 80:
+        case 91: case 92: case 93: case 94: case 95: case 96: case 97: case 99: case 99: case 100:
+            playerDirection = "left"; break;
+
+    }
+    
+    console.log(playerPoints + " Player " + `${playerNumber+1}` + "pnt"+playersPoints[playerNumber]+playerDirection);
+
+    playerField = (playerDirection==="right") ? playersPoints[playerNumber] : playersPoints[playerNumber] + changDirectionToLeft[playersPoints[playerNumber]%10]+1;
+
+
+    if(playerPoints>=100) {alert(`Player ${playerNumber+1} ` + "WINS!")}
+
 
     fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="hidden";
     fields[playerField-1].childNodes[2].style.color=color[playerNumber];
     fields[playerField-1].childNodes[2].style.visibility="visible";
-    playerFieldBefore[playerNumber] = playerField;
+    playerFieldBefore[playerNumber] = playerField-1;
 
     // if(player1Direction==="right") {
     // fields[player1points].childNodes[2].style.visibility="visible";} 
     // else if(player1Direction==="left") {
     // fields[player1points-1 + changDirectionToLeft[player1points%10]+1].childNodes[2].style.visibility="visible";
     // }
-
-    playersPoints[playerNumber]+=playerPoints;
-    // if(player1points>=100) {alert("WIN!")}
  }
 
-// for(let j=0; j<10; j++) {}
-    for(let i=0; i<playersPoints.length; i++){
-        moveAuto(playersPoints[i],i)
-    }
+// for(let j=0; j<10; j++) {
+//     for(let i=0; i<playersPoints.length; i++){
+//         moveAuto(playersPoints[i],i)
+//     }
 
-console.log(playersPoints);
-//setInterval(moveAuto,500);
+// console.log(playersPoints);
+// }
+
+setInterval(moveAuto,600,playersPoints[0],0);
