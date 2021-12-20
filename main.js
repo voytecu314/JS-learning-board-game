@@ -1,10 +1,20 @@
 const fields = document.querySelectorAll('.fields');
-let playersPoints = [0,0,0,0];
+let playersPoints = [], playerFieldBefore = [], names = [], round=1, nameCounter=0, namePrompt;
+let color = ["red","blue","green","orange","yellow","lightgrey","pink","cadetblue","darkgoldenrod","rebeccapurple","aqua","burlywood","coral","darkmagenta","firebrick","indigo","khaki","lavender","maroon","midnightblue"];
 const changDirectionToLeft = [-9,9,7,5,3,1,-1,-3,-5,-7];
-let playerFieldBefore = [0,0,0,0];
-let names = ["John","Bill","Susan","Derek"];
 
-let round=1;
+while(namePrompt!=="START"){
+namePrompt = prompt("Enter player name or type START to begin the game","START");
+names.push(namePrompt);
+nameCounter++;}
+
+for(let i=0; i<names.length-1; i++){
+    playersPoints[i]=0;
+    playerFieldBefore[i]=0;
+}
+
+console.log(names, playersPoints, playerFieldBefore);
+
 
 /*SET NUMBERS ON BOARD*/
 for(let i=10; i<92;i+=20){
@@ -16,7 +26,6 @@ for(let i=10; i<92;i+=20){
 
 function moveAuto(playerPoints,playerNumber) {
 
-    let color = ["red","blue","green","orange"];
     let playerField, playerDirection;
     let random = Math.ceil(Math.random()*6);
     playersPoints[playerNumber]+=random; 
@@ -34,9 +43,9 @@ function moveAuto(playerPoints,playerNumber) {
             playerDirection = "right"; break;
         case 11: case 12: case 13: case 14: case 15: case 16: case 17: case 18: case 19: case 20: 
         case 31: case 32: case 33: case 34: case 35: case 36: case 37: case 38: case 39: case 40:
-        case 51: case 52: case 53: case 55: case 55: case 56: case 57: case 58: case 59: case 60:
-        case 71: case 72: case 73: case 74: case 75: case 77: case 77: case 78: case 79: case 80:
-        case 91: case 92: case 93: case 94: case 95: case 96: case 97: case 99: case 99: case 100:
+        case 51: case 52: case 53: case 54: case 55: case 56: case 57: case 58: case 59: case 60:
+        case 71: case 72: case 73: case 74: case 75: case 76: case 77: case 78: case 79: case 80:
+        case 91: case 92: case 93: case 94: case 95: case 96: case 97: case 98: case 99: case 100:
             playerDirection = "left"; break;
 
     }
@@ -79,9 +88,9 @@ function moveAuto(playerPoints,playerNumber) {
                     playerField+=10; break;
                 case 12: case 13: case 14: case 15: case 16: case 17: case 18: case 19: 
                 case 32: case 33: case 34: case 35: case 36: case 37: case 38: case 39: 
-                case 52: case 53: case 55: case 55: case 56: case 57: case 58: case 59: 
-                case 72: case 73: case 74: case 75: case 77: case 77: case 78: case 79: 
-                case 92: case 93: case 94: case 95: case 96: case 97: case 99: case 99: 
+                case 52: case 53: case 54: case 55: case 56: case 57: case 58: case 59: 
+                case 72: case 73: case 74: case 75: case 76: case 77: case 78: case 79: 
+                case 92: case 93: case 94: case 95: case 96: case 97: case 98: case 99: 
                 case 20: case 40: case 60: case 80: case 100:
                     playerField--; break;
                 case 91: alert(`Player ${playerNumber+1}: ${names[playerNumber]} wins!`); break;
@@ -94,8 +103,8 @@ function moveAuto(playerPoints,playerNumber) {
 
 for(let j=0; j<30; j++) {
     for(let i=0; i<playersPoints.length; i++){
+        alert(`NEXT MOVE ${names[i]}`);
         moveAuto(playersPoints[i],i)
-        alert("NEXT MOVE PAL");
     }
     round++;
     console.log(playersPoints);

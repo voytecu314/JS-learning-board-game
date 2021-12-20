@@ -50,5 +50,5 @@ i {
 
 .pawn-ico, .display-name {
     visibility: hidden;
-    transition: visibility 2s;
+    transition: visibility .2s ease-out;
 }
