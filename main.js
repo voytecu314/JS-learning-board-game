@@ -44,7 +44,9 @@ function moveAuto(playerPoints,playerNumber) {
     if( playersPoints[playerNumber] >=100) {alert(`Player ${playerNumber+1} ` + "WINS!")}
 
 
-    fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="hidden";
+    if(fields[playerFieldBefore[playerNumber]].childNodes[2].style.color===color[playerNumber])
+    {fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="hidden";}
+    
     fields[playerField-1].childNodes[2].style.color=color[playerNumber];
     fields[playerField-1].childNodes[2].style.visibility="visible";
     playerFieldBefore[playerNumber] = playerField-1;
