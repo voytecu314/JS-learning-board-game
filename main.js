@@ -1,7 +1,8 @@
 const fields = document.querySelectorAll('.fields');
 let playersPoints = [1,1,1,1];
-const changDirectionToLeft = [-10,8,6,4,2,0,-2,-4,-6,-8];
+const changDirectionToLeft = [-9,9,7,5,3,1,-1,-3,-5,-7];
 let playerFieldBefore = [0,0,0,0];
+let names = ["John","Bill","Susan","Derek"];
 
 /*SET NUMBERS ON BOARD*/
 for(let i=10; i<92;i+=20){
@@ -38,22 +39,27 @@ function moveAuto(playerPoints,playerNumber) {
     }
     
 
-    playerField = (playerDirection==="right") ? playersPoints[playerNumber] : playersPoints[playerNumber] + changDirectionToLeft[playersPoints[playerNumber]%10]+1;
+    playerField = (playerDirection==="right") ? playersPoints[playerNumber] : playersPoints[playerNumber] + changDirectionToLeft[playersPoints[playerNumber]%10];
 
 
     if( playersPoints[playerNumber] >=100) {alert(`Player ${playerNumber+1} ` + "WINS!")}
 
 
-    if(fields[playerFieldBefore[playerNumber]].childNodes[2].style.color===color[playerNumber])
-    {fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="hidden";}
+    if(fields[playerFieldBefore[playerNumber]].childNodes[2].style.color===color[playerNumber]) {
+        fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="hidden";
+        fields[playerFieldBefore[playerNumber]].childNodes[4].style.visibility="hidden";
+    }
     
     fields[playerField-1].childNodes[2].style.color=color[playerNumber];
+    fields[playerField-1].childNodes[4].style.color=color[playerNumber];
+    fields[playerField-1].childNodes[4].innerText=names[playerNumber];
     fields[playerField-1].childNodes[2].style.visibility="visible";
+    fields[playerField-1].childNodes[4].style.visibility="visible";
     playerFieldBefore[playerNumber] = playerField-1;
 
  }
 
-for(let j=0; j<5; j++) {
+for(let j=0; j<20; j++) {
     for(let i=0; i<playersPoints.length; i++){
         moveAuto(playersPoints[i],i)
     }
