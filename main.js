@@ -13,7 +13,7 @@ for(let i=0; i<names.length-1; i++){
     playerFieldBefore[i]=0;
 }
 
-console.log(names, playersPoints, playerFieldBefore);
+console.log(names);
 
 
 /*SET NUMBERS ON BOARD*/
@@ -31,8 +31,8 @@ function throwDice(playerPoints,playerNumber) {
     
     
     playersPoints[playerNumber]+=random; 
-    if( playersPoints[playerNumber] >=100) {alert(`Player ${playerNumber+1} ` + "WINS!")}
-    console.log(`Player number ${playerNumber+1} got ${random}, his pts is ${playersPoints[playerNumber]} in round ${round}`);
+    if( playersPoints[playerNumber] >=100) {alert(`Player ${playerNumber+1} ` + "WINS!\n" +playersPoints)}
+    console.log(`${names[playerNumber]} got ${random}, his pts is ${playersPoints[playerNumber]} in round ${round}`);
     
     // playerDirection = (Math.floor(playersPoints[playerNumber]-1/10)%2) ? "left" : "right";
 
@@ -86,12 +86,13 @@ function throwDice(playerPoints,playerNumber) {
 
 function jsQuestion(playerNumber,playerDirection) {
 
-    fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="hidden";
-    fields[playerFieldBefore[playerNumber]].childNodes[4].style.visibility="hidden"; console.log(playerFieldBefore[playerNumber]);
-
+    
     if(Math.round(Math.random()*3)>0) { alert("JS OK");
-        
-        if(fields[playerFieldBefore[playerNumber]+10].childNodes[2].style.visibility==="visible"){
+    
+        fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="hidden";
+        fields[playerFieldBefore[playerNumber]].childNodes[4].style.visibility="hidden"; 
+
+        if(fields[playerFieldBefore[playerNumber]+10] && fields[playerFieldBefore[playerNumber]+10].childNodes[2].style.visibility==="visible"){
             beatenColor = fields[playerFieldBefore[playerNumber]+10].childNodes[2].style.color;
             for(let i=0; i<playersPoints.length; i++){
                 if(beatenColor===color[i]) {beatenPlayerNumber=i; break;}
@@ -108,6 +109,8 @@ function jsQuestion(playerNumber,playerDirection) {
             playerFieldBefore[beatenPlayerNumber] = playerFieldBefore[playerNumber];
         }
         
+
+        if( playerFieldBefore[playerNumber]+10 >=100) {alert(`${names[playerNumber]} ` + "WINS!\n" +playersPoints)}
         fields[playerFieldBefore[playerNumber]+10].childNodes[2].style.color=color[playerNumber];
         fields[playerFieldBefore[playerNumber]+10].childNodes[4].style.color=color[playerNumber];
         fields[playerFieldBefore[playerNumber]+10].childNodes[4].innerText=names[playerNumber];
@@ -117,7 +120,7 @@ function jsQuestion(playerNumber,playerDirection) {
         playersPoints[playerNumber] = (playerDirection==="right") ? playerFieldBefore[playerNumber] + 11 +  changDirectionToLeft[((playerFieldBefore[playerNumber]+1)%10)] : playerFieldBefore[playerNumber] + 11 ;
 
         playerFieldBefore[playerNumber] = playerFieldBefore[playerNumber]+10;
-        if( playersPoints[playerNumber] >=100) {alert(`Player ${playerNumber+1} ` + "WINS!")}
+        
     
     } else {alert("JS NO OK");
         fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="visible";
@@ -131,7 +134,7 @@ function jsQuestion(playerNumber,playerDirection) {
 
 for(let j=0; j<20; j++) {
     for(let i=0; i<playersPoints.length; i++){
-        // alert(`NEXT MOVE ${names[i]}`);
+        alert(`NEXT MOVE ${names[i]}`);
         throwDice(playersPoints[i],i)
     }
     round++;
