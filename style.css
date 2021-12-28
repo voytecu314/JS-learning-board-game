@@ -49,9 +49,8 @@ body {
 #grid-platform {
     display: grid;
     grid-template-columns: repeat(10, 1fr);
-    width: 90%;
-    height: 90%;
-    margin: 5% auto;
+    width: 75%;
+    height: 100%;
     row-gap: 1%;
 }
 
