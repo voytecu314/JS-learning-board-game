@@ -2,7 +2,7 @@ const fields = document.querySelectorAll('.fields');
 const dice = document.getElementById('dice-canvas');
 const playerBoard = document.querySelectorAll('.player-board'); console.log(playerBoard);
 
-let playersPoints = [], playerFieldBefore = [], names = [], round=1, nameCounter=0, namePrompt, beatenColor, beatenPlayerNumber, randomBefore=6;
+let playersPoints = [], playersPointsHistory = [], playerFieldBefore = [], names = [], round=0, nameCounter=0, namePrompt, beatenColor, beatenPlayerNumber, randomBefore=6;
 let color = ["red","blue","green","orange","yellow","lightgrey","pink","cadetblue","darkgoldenrod","rebeccapurple","aqua","burlywood","coral","darkmagenta","firebrick","indigo","khaki","lavender","maroon","midnightblue"];
 
 const changDirectionToLeft = [-9,9,7,5,3,1,-1,-3,-5,-7,-9];
@@ -61,7 +61,7 @@ function winner(playerNo) {
     document.getElementById('king').style.visibility='visible';
     document.getElementById('winner').style.visibility='visible';
     document.getElementById('winner-name').style.visibility='visible';
-    alert(`${names[playerNo]} ` + "WINS!\n" + `Score: ${playersPoints} in ${round} rounds`)
+    alert(`${names[playerNo]} ` + "WINS!\n" + `Score: ${playersPoints} in ${round+1} rounds`)
 }
 
 fetch("./quiz.json")
@@ -106,8 +106,9 @@ fetch("./quiz.json")
             randomBefore=random;
 
             playersPoints[playerNumber]+=random; 
+            playersPointsHistory[round][playerNumber].push(playersPoints[playerNumber]);
             
-            console.log(`${names[playerNumber]} got ${random}, his pts is ${playersPoints[playerNumber]} in round ${round}`);
+            console.log(`${names[playerNumber]} got ${random}, his pts is ${playersPoints[playerNumber]} in round ${round+1}`);
             
             // playerDirection = (Math.floor(playersPoints[playerNumber]-1/10)%2) ? "left" : "right";
 
@@ -143,6 +144,7 @@ fetch("./quiz.json")
                 for(let i=0; i<playersPoints.length; i++){
                     if(beatenColor===color[i]) {beatenPlayerNumber=i; break;}
                 }
+                playersPointsHistory[round][beatenPlayerNumber].push(0);
                 playersPoints[beatenPlayerNumber]=0;
                 playerBoard[beatenPlayerNumber].style.display='flex';
             }
@@ -186,6 +188,7 @@ fetch("./quiz.json")
                 if( playerFieldBefore[playerNumber]+10 >=100) winner(playerNumber);
 
                 playersPoints[playerNumber] = (playerDirection==="right") ? playerFieldBefore[playerNumber] + 11 +  changDirectionToLeft[((playerFieldBefore[playerNumber]+1)%10)] : playerFieldBefore[playerNumber] + 11 ;
+                playersPointsHistory[round][playerNumber].push(playersPoints[playerNumber]);
 
                 console.log(`${names[playerNumber]} got bonus \n ${playersPoints}`);
 
@@ -204,7 +207,7 @@ fetch("./quiz.json")
                     // fields[playerFieldBefore[playerNumber]].childNodes[4].style.visibility="visible";
 
                     playersPoints[beatenPlayerNumber] = (playerDirection==="right") ? playerFieldBefore[playerNumber] + 1 : playerFieldBefore[playerNumber] + 1 -  changDirectionToLeft[(playerFieldBefore[playerNumber]+1)%10]; //??
-
+                    playersPointsHistory[round][beatenPlayerNumber].push(playersPoints[beatenPlayerNumber]);
                     playerFieldBefore[beatenPlayerNumber] = playerFieldBefore[playerNumber];
                 }
                 
@@ -222,15 +225,20 @@ fetch("./quiz.json")
             } else {alert("Answer not correct, good luck next time");
                 fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="visible";
                 fields[playerFieldBefore[playerNumber]].childNodes[4].style.visibility="visible";
-
+                playersPointsHistory[round][playerNumber].push(playersPoints[playerNumber]);
                     }
         }
 
         for(let j=0; j<20; j++) {
+            playersPointsHistory.push([]);
+            for(let k=0; k<playersPoints.length; k++){
+                playersPointsHistory[j].push([]);
+            }
             for(let i=0; i<playersPoints.length; i++){
                 alert(`NEXT MOVE ${names[i]}`);
                 throwDice(playersPoints[i],i)
             }
+            console.log(playersPointsHistory);
             round++;
         }
 
