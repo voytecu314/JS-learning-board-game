@@ -1,7 +1,16 @@
 const fields = document.querySelectorAll('.fields');
-let playersPoints = [], playerFieldBefore = [], names = [], round=1, nameCounter=0, namePrompt, beatenColor, beatenPlayerNumber;
+let dice = document.getElementById('dice-canvas');
+let playersPoints = [], playerFieldBefore = [], names = [], round=1, nameCounter=0, namePrompt, beatenColor, beatenPlayerNumber, randomBefore=6;
 let color = ["red","blue","green","orange","yellow","lightgrey","pink","cadetblue","darkgoldenrod","rebeccapurple","aqua","burlywood","coral","darkmagenta","firebrick","indigo","khaki","lavender","maroon","midnightblue"];
 const changDirectionToLeft = [-9,9,7,5,3,1,-1,-3,-5,-7,-9];
+
+/*SET NUMBERS ON BOARD*/
+for(let i=10; i<92;i+=20){
+    for(let j=0; j<10; j++){
+        fields[i+j].childNodes[0].innerText=10-j+i;
+    }
+}
+/*SET NUMBERS ON BOARD*/
 
 while(namePrompt!=="START" || nameCounter>color.length){
 namePrompt = prompt("Enter player name or type START to begin the game","START");
@@ -15,32 +24,43 @@ for(let i=0; i<names.length-1; i++){
 
 console.log(names);
 
-
-/*SET NUMBERS ON BOARD*/
-for(let i=10; i<92;i+=20){
-    for(let j=0; j<10; j++){
-        fields[i+j].childNodes[0].innerText=10-j+i;
-    }
-}
-/*SET NUMBERS ON BOARD*/
-
 fetch("./quiz.json")
     .then(function(resp) {
         return resp.json();
     })
     .then(function(data) {
-        console.log(data[11][0]);
     
-
-
-
 
         function throwDice(playerPoints,playerNumber) {
 
-            let playerField, playerDirection;
+            let playerField, playerDirection, diceRotationY, diceRotationX, repeatRotationCounter=0;
             let random = Math.ceil(Math.random()*6); //dice
+
+            switch(random) {
+                case 1: diceRotationY=90; diceRotationX=360; break;
+                case 2: diceRotationY=270; diceRotationX=360; break;
+                case 3: diceRotationY=360; diceRotationX=90; break;
+                case 4: diceRotationY=360; diceRotationX=-90; break;
+                case 5: diceRotationY=180; diceRotationX=360; break;
+                case 6: diceRotationY=360; diceRotationX=360; break;
+            }
+
+            if(random===randomBefore){
+                repeatRotationCounter++;
+                if(repeatRotationCounter%2==0) {
+                    dice.style.transform=`rotateY(${diceRotationY+360}deg) rotateX(${diceRotationX+360}deg)`;
+                    }else {
+                    dice.style.transform=`rotateY(${diceRotationY-360}deg) rotateX(${diceRotationX-360}deg)`;
+                    }
+                
+                } else {
+                    dice.style.transform=`rotateY(${diceRotationY}deg) rotateX(${diceRotationX}deg)`;
+                    repeatRotationCounter=0;
+                }
             
-            
+
+            randomBefore=random;
+
             playersPoints[playerNumber]+=random; 
             if( playersPoints[playerNumber] >100) {alert(`Player ${playerNumber+1} ` + "WINS!\n" +playersPoints)}
             console.log(`${names[playerNumber]} got ${random}, his pts is ${playersPoints[playerNumber]} in round ${round}`);
@@ -89,6 +109,8 @@ fetch("./quiz.json")
                 
             playerFieldBefore[playerNumber] = playerField-1;
             
+            console.log(playersPoints);
+
             jsQuestion(playerNumber,playerDirection);
 
         }
@@ -98,15 +120,17 @@ fetch("./quiz.json")
         function jsQuestion(playerNumber,playerDirection) {
 
             let randomQuestion = Math.floor(Math.random()*data.length);
-            let answer = prompt(data[randomQuestion][0],data[12][1]);
+            let answer = prompt(data[randomQuestion][0],data[randomQuestion][1]);
 
             while(answer.toUpperCase()!=="A" && answer.toUpperCase()!=="B" && answer.toUpperCase()!=="C") {
-                answer = prompt(data[randomQuestion][0],data[12][1]);
+                answer = prompt(data[randomQuestion][0],data[randomQuestion][1]);
             }
 
             
-            if(answer.toUpperCase()===data[12][2]) { alert("Very good answer!");
-            
+            if(answer.toUpperCase()===data[randomQuestion][2]) { 
+                
+                alert("Very good answer!\n\nBONUS: Jump to next row.");
+
                 fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="hidden";
                 fields[playerFieldBefore[playerNumber]].childNodes[4].style.visibility="hidden"; 
 
@@ -138,6 +162,8 @@ fetch("./quiz.json")
                 playersPoints[playerNumber] = (playerDirection==="right") ? playerFieldBefore[playerNumber] + 11 +  changDirectionToLeft[((playerFieldBefore[playerNumber]+1)%10)] : playerFieldBefore[playerNumber] + 11 ;
 
                 playerFieldBefore[playerNumber] = playerFieldBefore[playerNumber]+10;
+
+                console.log(`${names[playerNumber]} got bonus \n ${playersPoints}`);
                 
             
             } else {alert("Answer not correct, good luck next time");
@@ -145,8 +171,6 @@ fetch("./quiz.json")
                 fields[playerFieldBefore[playerNumber]].childNodes[4].style.visibility="visible";
 
                     }
-
-
         }
 
         for(let j=0; j<20; j++) {
@@ -155,7 +179,6 @@ fetch("./quiz.json")
                 throwDice(playersPoints[i],i)
             }
             round++;
-            console.log(playersPoints);
         }
 
     });
