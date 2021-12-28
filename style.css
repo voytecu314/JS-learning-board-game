@@ -5,14 +5,38 @@ body {
 
 #flex-container {
     display: flex;
+    width: 95vw;
+    height: 95vh;
     border: aqua 1px solid;
+}
+
+#flex-left-column {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    flex-basis: 25%;
+    margin-left: 1%;
+}
+
+.players-grid {
+    height: 35%;
+}
+
+.players-grid:last-child {
+    display: grid;
+    place-items: center;
+    font-size: 3rem;
+}
+
+.players-grid:last-child>i {
+    font-size: 8rem;
 }
 
 #grid-platform {
     display: grid;
     grid-template-columns: repeat(10, 1fr);
-    width: 90vmin;
-    height: 90vmin;
+    width: 90%;
+    height: 90%;
     margin: 5% auto;
     row-gap: 1%;
 }
@@ -63,7 +87,7 @@ i {
 
 #dice-canvas {
     display: grid;
-    width: 25%;
+    flex-basis: 25%;
     place-items: center;
     position: relative;
     border: none;

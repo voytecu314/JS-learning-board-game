@@ -24,6 +24,25 @@ for(let i=0; i<names.length-1; i++){
 
 console.log(names);
 
+function setField(fieldNo, playerNo) {
+    fields[fieldNo].childNodes[2].style.color=color[playerNo];
+    fields[fieldNo].childNodes[4].style.color=color[playerNo];
+    fields[fieldNo].childNodes[4].innerText=names[playerNo];
+    fields[fieldNo].childNodes[2].style.visibility="visible";
+    fields[fieldNo].childNodes[4].style.visibility="visible";
+}
+
+function winner(playerNo) {
+    document.getElementById('winner').style.color=color[playerNo];
+    document.getElementById('winner-name').style.color=color[playerNo];
+    document.getElementById('winner-name').innerText=names[playerNo];
+    document.getElementById('king').style.color=color[playerNo];
+    document.getElementById('king').style.visibility='visible';
+    document.getElementById('winner').style.visibility='visible';
+    document.getElementById('winner-name').style.visibility='visible';
+    alert(`${names[playerNo]} ` + "WINS!\n" + `Score: ${playersPoints} in ${round} rounds`)
+}
+
 fetch("./quiz.json")
     .then(function(resp) {
         return resp.json();
@@ -62,7 +81,7 @@ fetch("./quiz.json")
             randomBefore=random;
 
             playersPoints[playerNumber]+=random; 
-            if( playersPoints[playerNumber] >100) {alert(`Player ${playerNumber+1} ` + "WINS!\n" +playersPoints)}
+            
             console.log(`${names[playerNumber]} got ${random}, his pts is ${playersPoints[playerNumber]} in round ${round}`);
             
             // playerDirection = (Math.floor(playersPoints[playerNumber]-1/10)%2) ? "left" : "right";
@@ -92,6 +111,7 @@ fetch("./quiz.json")
                 fields[playerFieldBefore[playerNumber]].childNodes[4].style.visibility="hidden";
             }
 
+            if( playersPoints[playerNumber] >100) winner(playerNumber);
             
             if(fields[playerField-1].childNodes[2].style.visibility==="visible"){
                 beatenColor = fields[playerField-1].childNodes[2].style.color;
@@ -101,11 +121,13 @@ fetch("./quiz.json")
                 playersPoints[beatenPlayerNumber]=0;
             }
 
-            fields[playerField-1].childNodes[2].style.color=color[playerNumber];
-            fields[playerField-1].childNodes[4].style.color=color[playerNumber];
-            fields[playerField-1].childNodes[4].innerText=names[playerNumber];
-            fields[playerField-1].childNodes[2].style.visibility="visible";
-            fields[playerField-1].childNodes[4].style.visibility="visible";
+            setField(playerField-1, playerNumber)
+
+            // fields[playerField-1].childNodes[2].style.color=color[playerNumber];
+            // fields[playerField-1].childNodes[4].style.color=color[playerNumber];
+            // fields[playerField-1].childNodes[4].innerText=names[playerNumber];
+            // fields[playerField-1].childNodes[2].style.visibility="visible";
+            // fields[playerField-1].childNodes[4].style.visibility="visible";
                 
             playerFieldBefore[playerNumber] = playerField-1;
             
@@ -134,17 +156,26 @@ fetch("./quiz.json")
                 fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="hidden";
                 fields[playerFieldBefore[playerNumber]].childNodes[4].style.visibility="hidden"; 
 
+
+                if( playerFieldBefore[playerNumber]+10 >=100) winner(playerNumber);
+
+                playersPoints[playerNumber] = (playerDirection==="right") ? playerFieldBefore[playerNumber] + 11 +  changDirectionToLeft[((playerFieldBefore[playerNumber]+1)%10)] : playerFieldBefore[playerNumber] + 11 ;
+
+                console.log(`${names[playerNumber]} got bonus \n ${playersPoints}`);
+
                 if(fields[playerFieldBefore[playerNumber]+10] && fields[playerFieldBefore[playerNumber]+10].childNodes[2].style.visibility==="visible"){
                     beatenColor = fields[playerFieldBefore[playerNumber]+10].childNodes[2].style.color;
                     for(let i=0; i<playersPoints.length; i++){
                         if(beatenColor===color[i]) {beatenPlayerNumber=i; break;}
                     }
 
-                    fields[playerFieldBefore[playerNumber]].childNodes[2].style.color=color[beatenPlayerNumber];
-                    fields[playerFieldBefore[playerNumber]].childNodes[4].style.color=color[beatenPlayerNumber];
-                    fields[playerFieldBefore[playerNumber]].childNodes[4].innerText=names[beatenPlayerNumber];
-                    fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="visible";
-                    fields[playerFieldBefore[playerNumber]].childNodes[4].style.visibility="visible";
+                    setField(playerFieldBefore[playerNumber], beatenPlayerNumber);
+
+                    // fields[playerFieldBefore[playerNumber]].childNodes[2].style.color=color[beatenPlayerNumber];
+                    // fields[playerFieldBefore[playerNumber]].childNodes[4].style.color=color[beatenPlayerNumber];
+                    // fields[playerFieldBefore[playerNumber]].childNodes[4].innerText=names[beatenPlayerNumber];
+                    // fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="visible";
+                    // fields[playerFieldBefore[playerNumber]].childNodes[4].style.visibility="visible";
 
                     playersPoints[beatenPlayerNumber] = (playerDirection==="right") ? playerFieldBefore[playerNumber] + 1 : playerFieldBefore[playerNumber] + 1 -  changDirectionToLeft[(playerFieldBefore[playerNumber]+1)%10]; //??
 
@@ -152,19 +183,15 @@ fetch("./quiz.json")
                 }
                 
 
-                if( playerFieldBefore[playerNumber]+10 >=100) {alert(`${names[playerNumber]} ` + "WINS!\n" +playersPoints)}
-                fields[playerFieldBefore[playerNumber]+10].childNodes[2].style.color=color[playerNumber];
-                fields[playerFieldBefore[playerNumber]+10].childNodes[4].style.color=color[playerNumber];
-                fields[playerFieldBefore[playerNumber]+10].childNodes[4].innerText=names[playerNumber];
-                fields[playerFieldBefore[playerNumber]+10].childNodes[2].style.visibility="visible";
-                fields[playerFieldBefore[playerNumber]+10].childNodes[4].style.visibility="visible";
+                setField(playerFieldBefore[playerNumber]+10, playerNumber);
 
-                playersPoints[playerNumber] = (playerDirection==="right") ? playerFieldBefore[playerNumber] + 11 +  changDirectionToLeft[((playerFieldBefore[playerNumber]+1)%10)] : playerFieldBefore[playerNumber] + 11 ;
+                // fields[playerFieldBefore[playerNumber]+10].childNodes[2].style.color=color[playerNumber];
+                // fields[playerFieldBefore[playerNumber]+10].childNodes[4].style.color=color[playerNumber];
+                // fields[playerFieldBefore[playerNumber]+10].childNodes[4].innerText=names[playerNumber];
+                // fields[playerFieldBefore[playerNumber]+10].childNodes[2].style.visibility="visible";
+                // fields[playerFieldBefore[playerNumber]+10].childNodes[4].style.visibility="visible";
 
                 playerFieldBefore[playerNumber] = playerFieldBefore[playerNumber]+10;
-
-                console.log(`${names[playerNumber]} got bonus \n ${playersPoints}`);
-                
             
             } else {alert("Answer not correct, good luck next time");
                 fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="visible";
