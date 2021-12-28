@@ -1,7 +1,10 @@
 const fields = document.querySelectorAll('.fields');
-let dice = document.getElementById('dice-canvas');
+const dice = document.getElementById('dice-canvas');
+const playerBoard = document.querySelectorAll('.player-board'); console.log(playerBoard);
+
 let playersPoints = [], playerFieldBefore = [], names = [], round=1, nameCounter=0, namePrompt, beatenColor, beatenPlayerNumber, randomBefore=6;
 let color = ["red","blue","green","orange","yellow","lightgrey","pink","cadetblue","darkgoldenrod","rebeccapurple","aqua","burlywood","coral","darkmagenta","firebrick","indigo","khaki","lavender","maroon","midnightblue"];
+
 const changDirectionToLeft = [-9,9,7,5,3,1,-1,-3,-5,-7,-9];
 
 /*SET NUMBERS ON BOARD*/
@@ -12,10 +15,28 @@ for(let i=10; i<92;i+=20){
 }
 /*SET NUMBERS ON BOARD*/
 
-while(namePrompt!=="START" || nameCounter>color.length){
+function setPlayerBoard(index) {
+    playerBoard[index].childNodes[0].style.color=color[index];
+    playerBoard[index].childNodes[1].style.color=color[index];
+    playerBoard[index].childNodes[2].style.color=color[index];
+    playerBoard[index].childNodes[0].style.visibility='visible';
+    playerBoard[index].childNodes[0].innerText=`Player ${index+1}`;
+    playerBoard[index].childNodes[1].style.visibility='visible';
+    playerBoard[index].childNodes[2].style.visibility='visible';
+    playerBoard[index].childNodes[2].innerText=names[nameCounter];
+}
+
+while(namePrompt!=="START" && nameCounter<color.length){
 namePrompt = prompt("Enter player name or type START to begin the game","START");
 names.push(namePrompt);
-nameCounter++;}
+
+if(namePrompt==='START') {alert('Lets begin!'); break;}
+else if(nameCounter==19) {alert('Max allowed number of players! Lets begin.');}
+
+setPlayerBoard(nameCounter);
+
+nameCounter++;
+}
 
 for(let i=0; i<names.length-1; i++){
     playersPoints[i]=0;
@@ -51,6 +72,10 @@ fetch("./quiz.json")
     
 
         function throwDice(playerPoints,playerNumber) {
+
+            if(playerPoints===0) {
+                playerBoard[playerNumber].style.display='none';
+            }
 
             let playerField, playerDirection, diceRotationY, diceRotationX, repeatRotationCounter=0;
             let random = Math.ceil(Math.random()*6); //dice
@@ -119,6 +144,7 @@ fetch("./quiz.json")
                     if(beatenColor===color[i]) {beatenPlayerNumber=i; break;}
                 }
                 playersPoints[beatenPlayerNumber]=0;
+                playerBoard[beatenPlayerNumber].style.display='flex';
             }
 
             setField(playerField-1, playerNumber)

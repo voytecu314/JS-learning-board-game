@@ -20,10 +20,24 @@ body {
 
 .players-grid {
     height: 35%;
+    display: grid;
 }
 
-.players-grid:last-child {
-    display: grid;
+#players-board {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.player-board {
+    display: flex;
+    flex-direction: column;  
+    overflow: hidden;  
+} 
+
+.player-no, .player-board > .display-name {
+    font-size: .8rem;
+}
+
+#winner-board {
     place-items: center;
     font-size: 3rem;
 }
@@ -77,9 +91,10 @@ i {
     transform: translateX(-200%);
 }
 
-.pawn-ico, .display-name {
+.pawn-ico, .display-name, .playerNo {
     visibility: hidden;
     transition: visibility .2s ease-out;
+    text-align: center;
 }
 
 
