@@ -7,6 +7,9 @@ let color = ["red","blue","green","orange","yellow","lightgrey","pink","cadetblu
 
 const changDirectionToLeft = [-9,9,7,5,3,1,-1,-3,-5,-7,-9];
 
+const cnv = document.getElementById("cnv");
+const ctx = cnv.getContext("2d");
+
 /*SET NUMBERS ON BOARD*/
 for(let i=10; i<92;i+=20){
     for(let j=0; j<10; j++){
@@ -55,13 +58,72 @@ function setField(fieldNo, playerNo) {
 
 function winner(playerNo) {
     document.getElementById('winner').style.color=color[playerNo];
+    document.getElementById('winner').innerText=`Winner!`;
     document.getElementById('winner-name').style.color=color[playerNo];
     document.getElementById('winner-name').innerText=names[playerNo];
     document.getElementById('king').style.color=color[playerNo];
     document.getElementById('king').style.visibility='visible';
-    document.getElementById('winner').style.visibility='visible';
-    document.getElementById('winner-name').style.visibility='visible';
     alert(`${names[playerNo]} ` + "WINS!\n" + `Score: ${playersPoints} in ${round+1} rounds`)
+    for(let i=0; i<playersPoints.length ;i++) {
+        drawChart(i);
+    }
+    
+}
+
+function displayRound(playerNo) {
+    document.getElementById('winner').innerText=`Round: ${round+1}`;
+    document.getElementById('winner-name').style.color=color[playerNo];
+    document.getElementById('winner-name').innerText=names[playerNo];
+}
+
+function drawChart(playerNo) {
+    document.getElementById('chart').style.display="block";
+    let tempRoundArray = [];
+    let move = 0, chartRoundFraction;
+
+    chartRoundFraction = (round<=10)?30:(round<=16)?24:12;
+
+    ctx.font = "8px Arial";
+    ctx.strokeStyle = "#FFFFFF";
+    ctx.beginPath();
+    
+
+    for(let i=0; i<=round; i++){
+        tempRoundArray = playersPointsHistory[i][playerNo];
+        (function () {
+            for(let j=0; j<tempRoundArray.length; j++){
+                ctx.moveTo(chartRoundFraction+move, cnv.height);
+                ctx.lineTo(chartRoundFraction+move, 0);
+                // ctx.fillText(tempRoundArray[j], move, 50); 
+                move+=chartRoundFraction;
+            }
+          }());
+    }
+    
+    ctx.stroke();
+
+    ctx.strokeStyle = color[playerNo];
+
+    move = 0;
+
+    ctx.beginPath();
+    
+    for(let i=0; i<=round; i++){
+        tempRoundArray = playersPointsHistory[i][playerNo];
+        ctx.moveTo(move, cnv.height-tempRoundArray[playerNo]);
+        (function () {
+            console.log(tempRoundArray+ " - " +round+ " - " + (i+1)+" : "+tempRoundArray.length);
+            for(let j=0; j<tempRoundArray.length; j++){
+                ctx.lineTo(move, cnv.height-tempRoundArray[j]);
+                console.log(move +":"+move);
+                if(j!=tempRoundArray.length-1){
+                    move+=(chartRoundFraction/(tempRoundArray.length-1));
+                }
+            }
+          }());
+    }
+    
+    ctx.stroke();
 }
 
 fetch("./quiz.json")
@@ -73,6 +135,8 @@ fetch("./quiz.json")
 
         function throwDice(playerPoints,playerNumber) {
 
+            displayRound(playerNumber);
+            
             if(playerPoints===0) {
                 playerBoard[playerNumber].style.display='none';
             }
@@ -150,12 +214,6 @@ fetch("./quiz.json")
             }
 
             setField(playerField-1, playerNumber)
-
-            // fields[playerField-1].childNodes[2].style.color=color[playerNumber];
-            // fields[playerField-1].childNodes[4].style.color=color[playerNumber];
-            // fields[playerField-1].childNodes[4].innerText=names[playerNumber];
-            // fields[playerField-1].childNodes[2].style.visibility="visible";
-            // fields[playerField-1].childNodes[4].style.visibility="visible";
                 
             playerFieldBefore[playerNumber] = playerField-1;
             
@@ -178,17 +236,16 @@ fetch("./quiz.json")
 
             
             if(answer.toUpperCase()===data[randomQuestion][2]) { 
-                
-                alert("Very good answer!\n\nBONUS: Jump to next row.");
 
                 fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="hidden";
                 fields[playerFieldBefore[playerNumber]].childNodes[4].style.visibility="hidden"; 
 
-
-                if( playerFieldBefore[playerNumber]+10 >=100) winner(playerNumber);
+                alert("Very good answer!\n\nBONUS: Jump to next row.");
 
                 playersPoints[playerNumber] = (playerDirection==="right") ? playerFieldBefore[playerNumber] + 11 +  changDirectionToLeft[((playerFieldBefore[playerNumber]+1)%10)] : playerFieldBefore[playerNumber] + 11 ;
                 playersPointsHistory[round][playerNumber].push(playersPoints[playerNumber]);
+
+                if( playerFieldBefore[playerNumber]+10 >=100) winner(playerNumber);
 
                 console.log(`${names[playerNumber]} got bonus \n ${playersPoints}`);
 
@@ -200,12 +257,6 @@ fetch("./quiz.json")
 
                     setField(playerFieldBefore[playerNumber], beatenPlayerNumber);
 
-                    // fields[playerFieldBefore[playerNumber]].childNodes[2].style.color=color[beatenPlayerNumber];
-                    // fields[playerFieldBefore[playerNumber]].childNodes[4].style.color=color[beatenPlayerNumber];
-                    // fields[playerFieldBefore[playerNumber]].childNodes[4].innerText=names[beatenPlayerNumber];
-                    // fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="visible";
-                    // fields[playerFieldBefore[playerNumber]].childNodes[4].style.visibility="visible";
-
                     playersPoints[beatenPlayerNumber] = (playerDirection==="right") ? playerFieldBefore[playerNumber] + 1 : playerFieldBefore[playerNumber] + 1 -  changDirectionToLeft[(playerFieldBefore[playerNumber]+1)%10]; //??
                     playersPointsHistory[round][beatenPlayerNumber].push(playersPoints[beatenPlayerNumber]);
                     playerFieldBefore[beatenPlayerNumber] = playerFieldBefore[playerNumber];
@@ -213,12 +264,6 @@ fetch("./quiz.json")
                 
 
                 setField(playerFieldBefore[playerNumber]+10, playerNumber);
-
-                // fields[playerFieldBefore[playerNumber]+10].childNodes[2].style.color=color[playerNumber];
-                // fields[playerFieldBefore[playerNumber]+10].childNodes[4].style.color=color[playerNumber];
-                // fields[playerFieldBefore[playerNumber]+10].childNodes[4].innerText=names[playerNumber];
-                // fields[playerFieldBefore[playerNumber]+10].childNodes[2].style.visibility="visible";
-                // fields[playerFieldBefore[playerNumber]+10].childNodes[4].style.visibility="visible";
 
                 playerFieldBefore[playerNumber] = playerFieldBefore[playerNumber]+10;
             
@@ -231,6 +276,7 @@ fetch("./quiz.json")
 
         for(let j=0; j<20; j++) {
             playersPointsHistory.push([]);
+            if(j==19) alert('This is the last round!')
             for(let k=0; k<playersPoints.length; k++){
                 playersPointsHistory[j].push([]);
             }
