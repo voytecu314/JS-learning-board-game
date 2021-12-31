@@ -16,9 +16,15 @@ body {
     z-index: 1;
     position: absolute;
     width: 75%;
-    height: 80%;
-    top: 10%;
-    left: 22.5%;
+    height: 60%;
+    top: 20%;
+    left: 25%;
+}
+
+#close-chart {
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 
 #cnv {

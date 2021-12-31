@@ -79,30 +79,33 @@ function displayRound(playerNo) {
 function drawChart(playerNo) {
     document.getElementById('chart').style.display="block";
     let tempRoundArray = [];
-    let move = 0, chartRoundFraction;
+    let move = 0, chartRoundFraction, fontPx;
 
-    chartRoundFraction = (round<=10)?30:(round<=16)?24:12;
+    chartRoundFraction = (round<10)?30:(round<=12)?24:(round<=16)?18:15;
 
-    ctx.font = "8px Arial";
-    ctx.strokeStyle = "#FFFFFF";
-    ctx.beginPath();
-    
+    if(playerNo==0) {
+        fontPx = (round<=10)?"8px":(round<=16)?"6px":"4px";
+        ctx.font = fontPx +" Arial";
+        ctx.strokeStyle = "#FFFFFF";
+        ctx.fillStyle = "black";
+        ctx.beginPath();
 
-    for(let i=0; i<=round; i++){
-        tempRoundArray = playersPointsHistory[i][playerNo];
-        (function () {
-            for(let j=0; j<tempRoundArray.length; j++){
-                ctx.moveTo(chartRoundFraction+move, cnv.height);
-                ctx.lineTo(chartRoundFraction+move, 0);
-                // ctx.fillText(tempRoundArray[j], move, 50); 
-                move+=chartRoundFraction;
-            }
-          }());
+        for(let i=0; i<=round; i++){
+            tempRoundArray = playersPointsHistory[i][0]; 
+            // (function () {
+                // for(let j=0; j<tempRoundArray.length; j++){
+                   move+=chartRoundFraction;
+                // }
+                ctx.fillText(`R. ${i+1}`, move-(chartRoundFraction/2)-5, 30);  
+                ctx.moveTo(move, cnv.height);
+                ctx.lineTo(move, 0);
+            //   }());
+        }
+        
+        ctx.stroke();
     }
-    
-    ctx.stroke();
 
-    ctx.strokeStyle = color[playerNo];
+    ctx.strokeStyle = ctx.fillStyle = color[playerNo];
 
     move = 0;
 
@@ -111,7 +114,7 @@ function drawChart(playerNo) {
     for(let i=0; i<=round; i++){
         tempRoundArray = playersPointsHistory[i][playerNo];
         ctx.moveTo(move, cnv.height-tempRoundArray[playerNo]);
-        (function () {
+        // (function () {
             console.log(tempRoundArray+ " - " +round+ " - " + (i+1)+" : "+tempRoundArray.length);
             for(let j=0; j<tempRoundArray.length; j++){
                 ctx.lineTo(move, cnv.height-tempRoundArray[j]);
@@ -120,10 +123,17 @@ function drawChart(playerNo) {
                     move+=(chartRoundFraction/(tempRoundArray.length-1));
                 }
             }
-          }());
+        //   }());
+          if(i==round) {
+            ctx.fillText(`${names[playerNo]}\n${playersPoints[playerNo]}`, move+1, cnv.height-playersPoints[playerNo]);
+          }
     }
     
     ctx.stroke();
+}
+
+function chartOff() {
+    document.getElementById('chart').style.display="none";
 }
 
 fetch("./quiz.json")
