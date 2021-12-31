@@ -62,8 +62,10 @@ body {
 }
 
 #winner-board {
+    width: 21vw;
     place-items: center;
     font-size: 3rem;
+    overflow-y: hidden ;
 }
 
 .players-grid:last-child>i {
@@ -86,6 +88,7 @@ i {
 .fields {
     border: 1px solid white; 
     text-align: center;
+    overflow: hidden;
 }
 
 .fields:nth-child(20n+10):not(:last-child) {
@@ -123,7 +126,6 @@ i {
     transition: visibility .2s ease-out;
     text-align: center;
 }
-
 
 /*DICE* sizes and positions are fixed*/
 
