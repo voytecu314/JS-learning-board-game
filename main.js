@@ -2,7 +2,7 @@ const fields = document.querySelectorAll('.fields');
 const dice = document.getElementById('dice-canvas');
 const playerBoard = document.querySelectorAll('.player-board'); console.log(playerBoard);
 
-let playersPoints = [], playersPointsHistory = [], playerFieldBefore = [], names = [], round=0, nameCounter=0, namePrompt, beatenColor, beatenPlayerNumber, randomBefore=6, secondThrow;
+let playersPoints = [], playersPointsHistory = [], playerFieldBefore = [], names = [], round=0, nameCounter=0, namePrompt, beatenColor, beatenPlayerNumber, randomBefore=6, secondThrow, secondQuestion;
 let color = ["red","blue","green","orange","yellow","lightgrey","pink","cadetblue","darkgoldenrod","rebeccapurple","aqua","burlywood","coral","darkmagenta","firebrick","indigo","khaki","lavender","maroon","midnightblue"];
 
 const changDirectionToLeft = [-9,9,7,5,3,1,-1,-3,-5,-7,-9];
@@ -141,7 +141,7 @@ fetch("./quiz.json")
 
             displayRound(playerNumber);
 
-            alert(`Please throw the dice player-${playerNumber} (${names[playerNumber]})`);
+            alert(`Please throw the dice player-${playerNumber+1} (${names[playerNumber]})`);
             
             if(playerPoints===0) {
                 playerBoard[playerNumber].style.display='none';
@@ -273,7 +273,16 @@ fetch("./quiz.json")
                 playerFieldBefore[playerNumber] = playerFieldBefore[playerNumber]+10;
 
                 secondThrow = !secondThrow;
-                throwDice(playersPoints[playerNumber],playerNumber);
+
+                if(secondThrow){
+                    secondQuestion = prompt("Another question or dice throw?","Type Q for question or T for throw");
+                    while(secondQuestion.toUpperCase()!=="Q" && secondQuestion.toUpperCase()!=="T") {
+                        secondQuestion = prompt("Another question or dice throw?","Type Q for question or T for throw");
+                    }
+                    if(secondQuestion.toUpperCase()==="T"){
+                        throwDice(playersPoints[playerNumber],playerNumber);
+                    } else jsQuestion(playerNumber,playerDirection);
+                }
             
             } else {alert("Answer not correct, good luck next time");
                 fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="visible";
