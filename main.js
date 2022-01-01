@@ -2,7 +2,7 @@ const fields = document.querySelectorAll('.fields');
 const dice = document.getElementById('dice-canvas');
 const playerBoard = document.querySelectorAll('.player-board'); console.log(playerBoard);
 
-let playersPoints = [], playersPointsHistory = [], playerFieldBefore = [], names = [], round=0, nameCounter=0, namePrompt, beatenColor, beatenPlayerNumber, randomBefore=6;
+let playersPoints = [], playersPointsHistory = [], playerFieldBefore = [], names = [], round=0, nameCounter=0, namePrompt, beatenColor, beatenPlayerNumber, randomBefore=6, secondThrow;
 let color = ["red","blue","green","orange","yellow","lightgrey","pink","cadetblue","darkgoldenrod","rebeccapurple","aqua","burlywood","coral","darkmagenta","firebrick","indigo","khaki","lavender","maroon","midnightblue"];
 
 const changDirectionToLeft = [-9,9,7,5,3,1,-1,-3,-5,-7,-9];
@@ -92,14 +92,10 @@ function drawChart(playerNo) {
 
         for(let i=0; i<=round; i++){
             tempRoundArray = playersPointsHistory[i][0]; 
-            // (function () {
-                // for(let j=0; j<tempRoundArray.length; j++){
-                   move+=chartRoundFraction;
-                // }
-                ctx.fillText(`R. ${i+1}`, move-(chartRoundFraction/2)-5, 30);  
-                ctx.moveTo(move, cnv.height);
-                ctx.lineTo(move, 0);
-            //   }());
+            move+=chartRoundFraction;
+            ctx.fillText(`R. ${i+1}`, move-(chartRoundFraction/2)-5, 30);  
+            ctx.moveTo(move, cnv.height);
+            ctx.lineTo(move, 0);
         }
         
         ctx.stroke();
@@ -114,7 +110,6 @@ function drawChart(playerNo) {
     for(let i=0; i<=round; i++){
         tempRoundArray = playersPointsHistory[i][playerNo];
         ctx.moveTo(move, cnv.height-tempRoundArray[playerNo]);
-        // (function () {
             console.log(tempRoundArray+ " - " +round+ " - " + (i+1)+" : "+tempRoundArray.length);
             for(let j=0; j<tempRoundArray.length; j++){
                 ctx.lineTo(move, cnv.height-tempRoundArray[j]);
@@ -123,7 +118,6 @@ function drawChart(playerNo) {
                     move+=(chartRoundFraction/(tempRoundArray.length-1));
                 }
             }
-        //   }());
           if(i==round) {
             ctx.fillText(`${names[playerNo]}\n${playersPoints[playerNo]}`, move+1, cnv.height-playersPoints[playerNo]);
           }
@@ -146,6 +140,8 @@ fetch("./quiz.json")
         function throwDice(playerPoints,playerNumber) {
 
             displayRound(playerNumber);
+
+            alert(`Please throw the dice player-${playerNumber} (${names[playerNumber]})`);
             
             if(playerPoints===0) {
                 playerBoard[playerNumber].style.display='none';
@@ -229,8 +225,7 @@ fetch("./quiz.json")
             
             console.log(playersPoints);
 
-            jsQuestion(playerNumber,playerDirection);
-
+            if(!secondThrow) jsQuestion(playerNumber,playerDirection);
         }
 
         /*After dice comes JS answers mechanism*/
@@ -276,6 +271,9 @@ fetch("./quiz.json")
                 setField(playerFieldBefore[playerNumber]+10, playerNumber);
 
                 playerFieldBefore[playerNumber] = playerFieldBefore[playerNumber]+10;
+
+                secondThrow = !secondThrow;
+                throwDice(playersPoints[playerNumber],playerNumber);
             
             } else {alert("Answer not correct, good luck next time");
                 fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="visible";
@@ -292,6 +290,7 @@ fetch("./quiz.json")
             }
             for(let i=0; i<playersPoints.length; i++){
                 alert(`NEXT MOVE ${names[i]}`);
+                secondThrow = false;
                 throwDice(playersPoints[i],i)
             }
             console.log(playersPointsHistory);
