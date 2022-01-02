@@ -13,8 +13,25 @@
     <div id="flex-container">
 
         <div id="chart">
-                <canvas id="cnv"></canvas>
-                <button onclick="chartOff()" id="close-chart">X</button>
+                <canvas id="cnv" onclick="statsOn()"></canvas>
+                <button title="After close - no re-open" onclick="chartOff()" id="close-chart">X</button>
+                <div id="stats-window"> High scores:
+                    <table id="highscore-tbl">
+                        <tr>
+                            <th>No.</th>
+                            <th>Name</th>
+                            <th>PTS</th>
+                            <th>Correct Answers</th>
+                            <th>Lucky 6's</th>
+                            <th>Incorrect Answers</th>
+                            <th>Beaten</th>
+                            <th>Beaten PTS</th>
+                            <th>Dice PTS</th>
+                            <th>Dice AVG</th>
+                        </tr>
+                    </table>
+                    <button onclick="statsOff()" id="close-stats">X</button>
+                </div>
         </div>
 
         <div id="flex-left-column">

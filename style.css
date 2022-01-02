@@ -21,7 +21,7 @@ body {
     left: 25%;
 }
 
-#close-chart {
+#close-chart, #close-stats {
     position: absolute;
     top: 0;
     right: 0;
@@ -32,6 +32,21 @@ body {
     height: 100%;
     background-color: wheat;
     z-index: 900;
+}
+
+#stats-window {
+    position: absolute;
+    top: 22%;
+    right: 7.5%;
+    width: 85%;
+    height: 65%;
+    overflow: scroll;
+    background-color: black;
+}
+
+#highscore-tbl td:not(:first-child){
+    text-align: center;
+    overflow: hidden;
 }
 
 #flex-left-column {

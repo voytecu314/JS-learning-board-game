@@ -1,8 +1,10 @@
 const fields = document.querySelectorAll('.fields');
 const dice = document.getElementById('dice-canvas');
-const playerBoard = document.querySelectorAll('.player-board'); console.log(playerBoard);
+const playerBoard = document.querySelectorAll('.player-board');
+const table = document.getElementById('highscore-tbl');
 
-let playersPoints = [], playersPointsHistory = [], playerFieldBefore = [], names = [], round=0, nameCounter=0,playerDirection, namePrompt, beatenColor, beatenPlayerNumber, randomBefore=6, secondThrow, secondQuestion;
+let playersPoints = [], playersPointsHistory = [], playerFieldBefore = [], names = [], correctAns = [], lucky = [], dicePts = [], diceAvg = [], beatenPts = [], beaten = [];
+let round=0, nameCounter=0,playerDirection, namePrompt, beatenColor, beatenPlayerNumber, randomBefore=6, secondThrow, secondQuestion, correct = 0, incorrect = 0;
 let color = ["red","blue","green","orange","yellow","lightgrey","pink","cadetblue","darkgoldenrod","rebeccapurple","aqua","burlywood","coral","darkmagenta","firebrick","indigo","khaki","lavender","maroon","midnightblue"];
 
 const changDirectionToLeft = [-9,9,7,5,3,1,-1,-3,-5,-7,-9];
@@ -42,6 +44,11 @@ nameCounter++;
 }
 
 for(let i=0; i<names.length-1; i++){
+    correctAns.push([]);
+    dicePts.push(0);
+    beatenPts.push(0);
+    beaten.push(0);
+    lucky.push(0);
     playersPoints[i]=0;
     playerFieldBefore[i]=0;
 }
@@ -89,7 +96,7 @@ function winner(playerNo) {
     for(let i=0; i<playersPoints.length ;i++) {
         drawChart(i);
     }
-    
+    createStats();
 }
 
 function displayRound(playerNo) {
@@ -103,7 +110,7 @@ function drawChart(playerNo) {
     let tempRoundArray = [];
     let move = 0, chartRoundFraction, fontPx;
 
-    chartRoundFraction = (round<6)?36:(round<10)?30:(round<=12)?24:(round<=16)?18:15;
+    chartRoundFraction = (round<6)?48:(round<10)?30:(round<=12)?24:(round<=16)?18:15;
 
     if(playerNo==0) {
         fontPx = (round<=10)?"8px":(round<=16)?"6px":"4px";
@@ -148,6 +155,40 @@ function drawChart(playerNo) {
     ctx.stroke();
 }
 
+function createStats() {
+    let tableRow;
+    for(let i=0; i<names.length-1; i++){
+        correctAns[i].forEach(function myFunction(ans) {
+            if(ans) correct++; else incorrect++;
+          });
+        
+        diceAvg[i] = dicePts[i]/(round+1);
+        tableRow=`<tr>
+                    <td>${i+1}</td>
+                    <td>${names[i]}</td>
+                    <td>${playersPoints[i]}</td>
+                    <td>${correct}</td>
+                    <td>${lucky[i]}</td>
+                    <td>${incorrect}</td>
+                    <td>${beaten[i]}</td>
+                    <td>${beatenPts[i]}</td>
+                    <td>${dicePts[i]}</td>
+                    <td>${diceAvg[i].toPrecision(3)}</td>
+                  </tr>\n`
+        table.innerHTML+=tableRow;
+        correct = 0;
+        incorrect = 0;
+    }
+}
+
+function statsOn() {
+    document.getElementById('stats-window').style.display="block";
+}
+
+function statsOff() {
+    document.getElementById('stats-window').style.display="none";
+}
+
 function chartOff() {
     document.getElementById('chart').style.display="none";
 }
@@ -171,6 +212,7 @@ fetch("./quiz.json")
 
             let playerField, diceRotationY, diceRotationX, repeatRotationCounter=0;
             let random = Math.ceil(Math.random()*6); //dice
+            dicePts[playerNumber]+=random;
 
             switch(random) {
                 case 1: diceRotationY=90; diceRotationX=360; break;
@@ -220,6 +262,9 @@ fetch("./quiz.json")
                     if(beatenColor===color[i]) {beatenPlayerNumber=i; break;}
                 }
                 playersPointsHistory[round][beatenPlayerNumber].push(0);
+                beatenPts[beatenPlayerNumber] -= playersPoints[beatenPlayerNumber];
+                beaten[beatenPlayerNumber]++;
+                console.log("beaten: "+beatenPts+" : "+beaten);
                 playersPoints[beatenPlayerNumber]=0;
                 playerBoard[beatenPlayerNumber].style.display='flex';
             }
@@ -230,6 +275,7 @@ fetch("./quiz.json")
             
             console.log(playersPoints);
             if(random==6) {
+                lucky[playerNumber]++;
                 alert('Lucky! You got 6, you will throw the dice again.')
                 throwDice(playerPoints,playerNumber);
             } else if(!secondThrow) jsQuestion(playerNumber,playerDirection);
@@ -252,12 +298,10 @@ fetch("./quiz.json")
                 fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="hidden";
                 fields[playerFieldBefore[playerNumber]].childNodes[4].style.visibility="hidden"; 
 
+                correctAns[playerNumber].push(true);
+
                 alert("Very good answer!\n\nBONUS: Jump to next row.");
                 console.log(playerDirection+":"+playerFieldBefore[playerNumber]);
-                playersPoints[playerNumber] = (playerDirection==="right") ? playerFieldBefore[playerNumber] + 11 +  changDirectionToLeft[((playerFieldBefore[playerNumber]+1)%10)] : playerFieldBefore[playerNumber] + 11 ;
-                playersPointsHistory[round][playerNumber].push(playersPoints[playerNumber]);
-                console.log(playerDirection+":"+playerFieldBefore[playerNumber]);
-                if( playerFieldBefore[playerNumber]+10 >=100) winner(playerNumber);
 
                 if(fields[playerFieldBefore[playerNumber]+10] && fields[playerFieldBefore[playerNumber]+10].childNodes[2].style.visibility==="visible"){
                     beatenColor = fields[playerFieldBefore[playerNumber]+10].childNodes[2].style.color;
@@ -267,13 +311,26 @@ fetch("./quiz.json")
 
                     setField(playerFieldBefore[playerNumber], beatenPlayerNumber);
 
-                    playersPoints[beatenPlayerNumber] = (playerDirection==="right") ? playerFieldBefore[playerNumber] + 1 : playerFieldBefore[playerNumber] + 1 -  changDirectionToLeft[(playerFieldBefore[playerNumber]+1)%10]; //??
+                    beatenPts[beatenPlayerNumber] -= (playersPoints[beatenPlayerNumber]-playersPoints[playerNumber])
+                    beaten[beatenPlayerNumber]++;
+                    console.log("beaten: "+beatenPts+" : "+beaten);
+                    playersPoints[beatenPlayerNumber] = playersPoints[playerNumber];
+                    // (playerDirection==="right") ? playerFieldBefore[playerNumber] + 1 : playerFieldBefore[playerNumber] + 1 -  changDirectionToLeft[(playerFieldBefore[playerNumber]+1)%10]; //??
                     playersPointsHistory[round][beatenPlayerNumber].push(playersPoints[beatenPlayerNumber]);
                     playerFieldBefore[beatenPlayerNumber] = playerFieldBefore[playerNumber];
                 }
+
+                playersPoints[playerNumber] = (playerDirection==="right") ? playerFieldBefore[playerNumber] + 11 +  changDirectionToLeft[((playerFieldBefore[playerNumber]+1)%10)] : playerFieldBefore[playerNumber] + 11 ;
+
+                playersPointsHistory[round][playerNumber].push(playersPoints[playerNumber]);
+
+                console.log(playerDirection+":"+playerFieldBefore[playerNumber]);
+                
+                if( playerFieldBefore[playerNumber]+10 >=100) winner(playerNumber);
                 
 
                 setField(playerFieldBefore[playerNumber]+10, playerNumber);
+                playerDirection = setDirection(playersPoints[playerNumber]);
 
                 playerFieldBefore[playerNumber] = playerFieldBefore[playerNumber]+10;
 
@@ -289,7 +346,6 @@ fetch("./quiz.json")
                     if(secondQuestion.toUpperCase()==="T"){
                         throwDice(playersPoints[playerNumber],playerNumber);
                     } else {
-                        playerDirection = setDirection(playersPoints[playerNumber]);
                         jsQuestion(playerNumber,playerDirection);
                         }
                 }
@@ -297,6 +353,7 @@ fetch("./quiz.json")
             } else {alert("Answer not correct, good luck next time");
                 fields[playerFieldBefore[playerNumber]].childNodes[2].style.visibility="visible";
                 fields[playerFieldBefore[playerNumber]].childNodes[4].style.visibility="visible";
+                correctAns[playerNumber].push(false);
                 playersPointsHistory[round][playerNumber].push(playersPoints[playerNumber]);
                     }
         }
@@ -308,7 +365,7 @@ fetch("./quiz.json")
                 playersPointsHistory[j].push([]);
             }
             for(let i=0; i<playersPoints.length; i++){
-                alert(`NEXT MOVE ${names[i]}`);
+                alert(`NEXT MOVE: ${names[i]}`);
                 secondThrow = false;
                 throwDice(playersPoints[i],i)
             }
